@@ -5,6 +5,7 @@ class Main_win:
         def __init__(self, winde):
                 self.wind = winde
                 self.not_valid = False
+                self.score = 0
         
         def interface(self):
                 self.inter_face = Frame(self.wind)
@@ -26,7 +27,7 @@ class Main_win:
                 self.Sn = Entry(self.inter_face)
                 self.Sn.place(x=280,y=125)
 
-                next=Button(self.inter_face, text="  Next ", font=50,bg="green",fg="black", command = self.selecting_level_win)
+                next=Button(self.inter_face, text="Next", font=50,bg="green",fg="black",width=7,height=1, command = self.selecting_level_win)
                 next.place(x=400, y=240)
         
                 Label(self.inter_face,text=" **** ",font="Arial 50 bold",fg="gray95").grid(column=3,row=1)
@@ -59,12 +60,14 @@ class Main_win:
                         Label(self.level_win,text=" **** ",font="Arial 50 bold",fg="gray95").grid(column=3,row=2)
                         Label(self.level_win,text=" *** ",font="Arial 50 bold",fg="gray95").grid(column=1,row=3)
 
-                        next=Button(self.level_win, text="  Next ", font=50,bg="green",fg="black", command = self.qustion_win)
+                        next=Button(self.level_win, text="Next", font=50,bg="green",fg="black",width=7,height=1, command = self.qustion_win)
                         next.place(x=400, y=240)
 
         def qustion_win(self):
+                if (self.var.get() == 0):
+                    self.notvalid = True
 
-                if (self.var.get() ==1):
+                elif (self.var.get() ==1):
                         self.x = ["1","2","3","4","5"]
                         self.y = ["6","7","8","9","10"]
                         self.lev = "Easiest"
@@ -86,7 +89,7 @@ class Main_win:
 
                 self.random_qustion()
 
-                next=Button(self.qustions, text=" Submit ", font=50,bg="green",fg="black", command = lambda: self.submet(self.n))
+                next=Button(self.qustions, text="Submit", font=50,bg="cornflower blue",fg="black",width=7,height=1, command = lambda: self.submit(self.pa))
                 next.place(x=400, y=240)
 
                 Label(self.qustions,text=" **** ",font="Arial 100 bold",fg="gray95").grid(column=3,row=1)
@@ -98,66 +101,122 @@ class Main_win:
                 self.A = random.choice(self.y)
                 self.B =  random.choice(self.x)
 
-                self.noting = random.randrange(30,100)
+                
                 
                 Q_s = ('+', '-', 'x')
                 self.Q = random.choice(Q_s)
-                
+                self.noting = random.randrange(30,100) 
+
                 if self.Q == '+':
                         self.solve = int(self.A) + int(self.B)
-                        self.qustion()
+                        #Check if same
+                        if self.noting == self.solve:
+                                self.noting =- 5
+                        self.Qustions()
 
                 elif self.Q == '-':
                         self.solve = int(self.A) - int(self.B)
-                        self.qustion()
+                        if self.noting == self.solve:
+                                self.noting =- 5
+                        self.Qustions()
                         
                 elif self.Q == 'x':
                         self.solve = int(self.A) * int(self.B)
-                        self.qustion()     
+                        if self.noting == self.solve:
+                                self.noting =- 5
+                        self.Qustions()  
+
+           
+                
         
         def answer(self):
                 return self.solve
         
-        def qustion(self):
+        def Qustions(self):
                 op = [self.noting , self.solve]
                 self.l = random.choice(op)
-                self.i = random.choice(op)
-                question = Label(self.qustions, text=f"Q{self.count}) {self.A} {self.Q} {self.B} = ?",font=('현대하모니 L', 20, 'bold'))
-                question.place(x= 170 , y = 100)
-                
-                self.n = IntVar()
-                btn_1 = Radiobutton(self.qustions, text = f"{self.l}", font=('현대하모니 L', 15), value = 1, variable = self.n)
-                btn_1.place(x = 130, y = 170)
-                btn_2 = Radiobutton(self.qustions, text =f"{self.i}", font=('현대하모니 L', 15), value = 2, variable = self.n)
-                btn_2.place(x = 320, y = 170)
+                op.remove(self.l)
+                self.r = op[0]
+                question = Label(self.qustions, text=f"Q{self.count}) {self.A} {self.Q} {self.B} = ",font=('현대하모니 L', 25, 'bold'))
+                question.place(x= 100 , y = 120)
+                 
+                self.pa = Entry(self.qustions,font=('현대하모니 L', 20))
+                self.pa.place(x=320,y=130,width=100,height=25)
                 
         
         
-        def submet(self,prob):
+        def submit(self,answ):
                 # input == answer
-                if self.l == self.solve:
-                        self.n = self.k
-                if self.i == self.solve:
-                        self.n = self.k
+                # print(f'prob is: {prob}')
+                # if self.l == self.solve:
+                #         self.n = self.k
+                # if self.r == self.solve:
+                #         self.n = self.k
+                
+                # if prob.get() == str(self.answer()):
+                Label(text = "n is: {self.n.get()}", font = ('현대하모니 L', 10, 'bold')).grid
+                print(f'answer is: {self.answer()}')
+                
 
-                if prob.get() == str(self.answer()):
-                        Label(self.qustions, text="✔️", fg="green",font="Arial 20 bold").place(x=500, y=160)
+                if answ.get() == str(self.answer()):
+                        print("Correct")
+                        #TODO: Fix X Y coordinates
+                        Label(self.qustions, text="✔️", fg="green").place(x=100, y=100)
               
-                        self.scoer_count += 1 
+                        self.score += 1 
                         self.count += 1
-                        self.nex =Button(self.qustions ,text="Next",bg="green",fg="black" ,font="Arial 14 bold",width=9,height=2,command = self.next ).place(x=510, y=300)
+                        self.nextButton =Button(self.qustions ,text="Next", font=50,bg="green",fg="black" ,width=7,height=1,command = self.Next_button )
+                        self.nextButton.place(x=400, y=240)
                 else:
+                        print("Wrong")
+                        #TODO: Fix X Y coordinates
                         wrong = Label(self.qustions, text="❌", fg="red")
-                        wrong.place(x=500, y=160)
+                        wrong.place(x=100, y=100)
                         self.count += 1
-                        self.nex =Button(self.qustions ,text="Next",bg="green",fg="black" ,font="Arial 14 bold",width=9,height=2,command = self.next ).place(x=510, y=300)
-                        Label(self.qustions ,text=f"The Answer is {self.answer_1}",font="Arial 14 bold").place(x=310, y=220)
+                        self.nextButton =Button(self.qustions ,text="Next", font=50,bg="green",fg="black" ,width=7,height=1,command = self.Next_button )
+                        self.nextButton.place(x=400, y=240)
 
                 # button == 10 times 
                 if self.count == 11:
                         # next Frame button
-                        Button(self.qustions ,text="Exit",bg="cornflower blue",fg="black" ,font="Arial 14 bold",width=9,height=2,command = self.End_wind ).place(x=510, y=300)
+                        Button(self.qustions ,text="Exit",bg="red",fg="black" ,font=50 ,width=7,height=1,command = self.Result_wind ).place(x=400, y=240)
 
+        def Next_button (self):
+
+            Label (self.qustions, text ="********************",font="Arial 20 bold",fg="gray95").place(x= 100 , y = 120)
+            self.random_qustion()
+
+            next=Button(self.qustions, text="Submit", font=50,bg="cornflower blue",fg="black",width=7,height=1 ,command = lambda: self.submit(self.pa))
+            next.place(x=400, y=240)
+    
+        def Result_wind (self):
+            self.qustions.grid_forget()
+            self.result = Frame(self.wind)
+            self.result.grid()
+            Label(self.result, text = f"Result",font = ('현대하모니 L', 30, 'bold')).grid(row=0, column=2)
+            Label(self.result, text = f" You got [{self.score}/10]",font = ('현대하모니 L', 25, 'bold')).grid(row=1, column=2)
+
+            Label(self.result,text=" ******** ",font="Arial 100 bold",fg="gray95").grid(column=3,row=5)
+            Label(self.result,text=" ******** ",font="Arial 30 bold",fg="gray95").grid(column=1,row=3)
+            Label(self.result,text=" ******** ",font="Arial 30 bold",fg="gray95").grid(column=1,row=4)
+
+
+            New_player=Button(self.result, text="New_player", font=50,bg="cyan",fg="black",width=10,height=1 ,command =self.New_Player )
+            New_player.place(x=205, y=150)
+
+            New_game=Button(self.result, text="New_game", font=50,bg="green",fg="black",width=10,height=1 ,command = self.New_Game)
+            New_game.place(x=205, y=200)
+            
+            Exit=Button(self.result, text="Exit", font=50,bg="red",fg="black",width=7,height=1 ,command = self.wind.destroy)
+            Exit.place(x=225, y=250)
+        
+        def New_Player(self):
+            self.result.destroy()
+            self.level_win.grid() 
+         
+        def New_Game(self):
+            self.result.destroy()
+            self.interface()
 root = Tk()
 
 
